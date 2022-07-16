@@ -31,59 +31,33 @@
         主要职责：全栈开发
 
 
-##auth模块
+## auth模块
     权鉴系统
-
-##cart模块
-
+## cart模块
     购物车
-
-##common模块
-
+## common模块
     公共代码
-
-##coupon模块
-
+## coupon模块
     优惠系统
-
-##gateway模块
-
+## gateway模块
     网关
-
-##member模块
-
+## member模块
     会员系统
-
-##order模块
-
+## order模块
     订单系统
-
-##product模块
-
+## product模块
     商品系统
-
-##rabbitMq模块
-
+## rabbitMq模块
     RabbitMq服务
-
-##search模块
-
+## search模块
     全局检索ElasticSearch系统
-
-##third-party模块
-
+## third-party模块
     三方交互系统
-
-##ware模块
-
+## ware模块
     仓库系统
-
-##renren-fast模块
-
+## renren-fast模块
     后台管理系统
-
-##renren-generator模块
-
+## renren-generator模块
     - 大大减少开发工作量 
     - 根据数据库内容逆向生成增删改查业务代码
     - 同时也可生成后端管理界面的vue代码
