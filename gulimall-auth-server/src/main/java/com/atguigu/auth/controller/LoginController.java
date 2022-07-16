@@ -95,8 +95,8 @@ public class LoginController {
     @RequestMapping("/logout")
     public String logout(HttpSession session) {
         try {
-            session.invalidate();
             session.removeAttribute(AuthServiceConstant.LOGIN_USER);
+            session.invalidate();
         }catch (Exception e){
             log.error("退出错误{}",e);
         }
