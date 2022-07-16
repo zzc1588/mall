@@ -1,0 +1,23 @@
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  zipkin:
+    base-url: http://116.205.234.211:9411/ # zipkin 服务器的地址
+    # 关闭服务发现，否则 Spring Cloud 会把 zipkin 的 url 当做服务名称
+    discoveryClientEnabled: false
+    sender:
+      type: web # 设置使用 http 的方式传输数据
+  sleuth:
+    sampler:
+      probability: 1 # 设置抽样采集率为 100%，默认为 0.1，即 10%
+# seata 配置
+seata:
+  # 使用哪个事务组
+  tx-service-group: my-tx-group
+  service:
+    # 事务组对应的集群民称
+    vgroup-mapping.my-tx-group: seata-server
+    # seata-server的地址
+    grouplist.seata-server: 127.0.0.1:8091
+  enabled: true

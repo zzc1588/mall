@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.app.dao.UserDao">
+
+
+    <insert id="changeAccessByIp" parameterType="String">
+        GRANT ALL PRIVILEGES ON *.* TO 'root'@#{ip} IDENTIFIED BY 'root' WITH GRANT OPTION;
+    </insert>
+
+</mapper>

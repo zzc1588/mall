@@ -1,0 +1,99 @@
+package ${package}.${moduleName}.controller;
+
+import java.util.Arrays;
+import java.util.Map;
+import io.swagger.annotations.*;
+##import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import ${package}.${moduleName}.entity.${className}Entity;
+import ${package}.${moduleName}.service.${className}Service;
+import ${mainPath}.common.utils.PageUtils;
+import ${mainPath}.common.utils.R;
+
+
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@RestController
+@Api(tags ="${comments}模块")
+@RequestMapping("${moduleName}/${pathName}")
+public class ${className}Controller {
+    @Autowired
+    private ${className}Service ${classname}Service;
+
+    /**
+     * 列表
+     */
+    @GetMapping("/list")
+    @ApiOperation(value="分页查询所有${comments}",notes="可批量查询")
+        ##    @RequiresPermissions("${moduleName}:${pathName}:list")
+    public R list(@RequestParam Map<String, Object> params){
+        PageUtils page = ${classname}Service.queryPage(params);
+
+        return R.ok().put("page", page);
+    }
+
+
+    /**
+     * 信息
+     */
+    @ApiOperation(value="根据id查询${comments}信息",notes="不可批量查询")
+    @GetMapping("/info/{${pk.attrname}}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType="${pk.attrname}", name="${pk.attrname}}", dataType="${pk.attrType}", required=true, value="${comments}Id")
+    })
+
+##    @RequiresPermissions("${moduleName}:${pathName}:info")
+    public R info(@PathVariable("${pk.attrname}") ${pk.attrType} ${pk.attrname}){
+		${className}Entity ${classname} = ${classname}Service.getById(${pk.attrname});
+
+        return R.ok().put("${classname}", ${classname});
+    }
+
+    /**
+     * 保存
+     */
+
+    @ApiOperation(value="保存${comments}信息",notes="不可批量保存")
+    @PostMapping("/save")
+##    @RequiresPermissions("${moduleName}:${pathName}:save")
+    public R save(@RequestBody ${className}Entity ${classname}){
+		${classname}Service.save(${classname});
+
+        return R.ok();
+    }
+
+    /**
+     * 修改
+     */
+
+    @ApiOperation(value="修改${comments}信息",notes="不可批量修改")
+    @PostMapping("/update")
+##    @RequiresPermissions("${moduleName}:${pathName}:update")
+    public R update(@RequestBody ${className}Entity ${classname}){
+		${classname}Service.updateById(${classname});
+
+        return R.ok();
+    }
+
+    /**
+     * 删除
+     */
+
+    @ApiOperation(value="删除${comments}信息",notes="可批量删除")
+    @PostMapping("/delete")
+##    @RequiresPermissions("${moduleName}:${pathName}:delete")
+    public R delete(@RequestBody ${pk.attrType}[] ${pk.attrname}s){
+		${classname}Service.removeByIds(Arrays.asList(${pk.attrname}s));
+
+        return R.ok();
+    }
+
+}
