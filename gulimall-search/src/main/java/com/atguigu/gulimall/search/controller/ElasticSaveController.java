@@ -24,12 +24,6 @@ import java.util.List;
 public class ElasticSaveController {
     @Autowired
     private ElasticSaveService elasticSaveService;
-    @Autowired
-    private FeignService feignService;
-    @RequestMapping("/test")
-    public R test(){
-        return R.ok();
-    }
 
     //上架商品
     @PostMapping("/product")
