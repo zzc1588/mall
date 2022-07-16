@@ -16,8 +16,6 @@
         <module>gulimall-member</module>
         <module>gulimall-order</module>
         <module>gulimall-product</module>
-        <module>renren-fast</module>
-        <module>renren-generator</module>
         <module>gulimall-common</module>
         <module>gulimall-gateway</module>
         <module>gulimall-third-party</module>
