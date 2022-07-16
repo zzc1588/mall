@@ -1,4 +1,4 @@
-# mall 
+# mall  
 ### 项目简介：一个分布式前后端分离的电商项目，采用了当今主流的系统架构和技术栈
 ### 技术栈：
     Spring Boot、SpringCloudAlibaba、Mybatis-Plus、MySQL、Redis、
