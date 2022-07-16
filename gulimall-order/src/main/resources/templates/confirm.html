@@ -509,6 +509,7 @@
         <form action="http://order.gulimall.com/submitOrder" method="post">
             <input id="addrInput" type="hidden" name="addrId" required/>
             <input id="payPriceInput" type="hidden" name="payPrice">
+            <input id="payType" type="hidden" name="payType" value="1">
             <input name="orderToken" th:value="${confirmOrderData.orderToken}" type="hidden"/>
             <button class="tijiao zzc_confirm_button" type="submit" >提交订单</button>
         </form>
