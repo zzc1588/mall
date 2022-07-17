@@ -7,10 +7,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.UnexpectedTypeException;
@@ -41,7 +39,6 @@ public class GulimallExceptionControllerAdvice {
         extracted(bindingResult, errorMap);
         return R.error(BizCodeEnume.VAILD_EXCEPTION.getCode(),BizCodeEnume.VAILD_EXCEPTION.getMsg()).put("data",errorMap);
     }
-
 
     /**
      * 封装参数字段 和 错误信息和map集合（支持嵌套对象校验）
@@ -91,7 +88,6 @@ public class GulimallExceptionControllerAdvice {
         return R.error(BizCodeEnume.CONCURRENT_ABORT_EXCEPTION.getCode(),BizCodeEnume.CONCURRENT_ABORT_EXCEPTION.getMsg());
     }
 
-
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public R handleException(HttpMessageNotReadableException notReadableException){
         log.error("错误：",notReadableException);
@@ -99,7 +95,7 @@ public class GulimallExceptionControllerAdvice {
     }
 
     @ExceptionHandler(value = Throwable.class)
-    public R handleException(Throwable throwable){
+    public R handleThrowable(Throwable throwable){
         log.error("错误：",throwable);
         return R.error(BizCodeEnume.UNKNOW_EXCEPTION.getCode(),BizCodeEnume.UNKNOW_EXCEPTION.getMsg());
     }

@@ -1,6 +1,5 @@
 package com.atguigu.gulimall.ware.service.impl;
 
-import com.atguigu.common.to.mq.QueueMessageTo;
 import com.atguigu.common.utils.R;
 import com.atguigu.gulimall.ware.entity.WareOrderTaskDetailEntity;
 import com.atguigu.gulimall.ware.entity.WareOrderTaskEntity;
@@ -15,11 +14,6 @@ import com.atguigu.gulimall.ware.service.WareOrderTaskDetailService;
 import com.atguigu.gulimall.ware.service.WareOrderTaskService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessagePostProcessor;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,10 +43,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     private WareOrderTaskDetailService wareOrderTaskDetailService;
     @Autowired
     private WareOrderTaskService  wareOrderTaskService;
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-    @Autowired
-    private WareFeignService cartFeignService;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         LambdaQueryWrapper<WareSkuEntity> wrapper = new LambdaQueryWrapper<>();
@@ -156,22 +147,6 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                 throw new NoStockException(item.getSkuId());
             }
         }
-//        MessagePostProcessor messagePostProcessor = new MessagePostProcessor() {
-//            @Override
-//            public Message postProcessMessage(Message message) throws AmqpException {
-//                message.getMessageProperties().setHeader("__ContentTypeId__", WareOrderTaskDetailEntity.class);
-//                return message;
-//            }
-//        };
-//        QueueMessageTo queueMessageTo = new QueueMessageTo();
-//        queueMessageTo.setToExchange("stock-event-exchange");
-//        queueMessageTo.setRoutingKey("stock.locked");
-//        queueMessageTo.setContent(list);
-//        String string = WareOrderTaskDetailEntity.class.toString();
-//        queueMessageTo.setClassType(string.split(" ")[1]);
-//        System.out.println(queueMessageTo);
-//        cartFeignService.sendQueueMessage(queueMessageTo);
-//        rabbitTemplate.convertAndSend("stock-event-exchange","stock.locked",list,messagePostProcessor,new CorrelationData());
         return true;
     }
 
