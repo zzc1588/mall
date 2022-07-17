@@ -10,15 +10,18 @@ import com.atguigu.gulimall.cart.service.CartService;
 import com.atguigu.gulimall.cart.vo.Cart;
 import com.atguigu.gulimall.cart.vo.CartItem;
 import com.atguigu.gulimall.cart.vo.SkuInfoVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
@@ -28,12 +31,13 @@ import java.util.stream.Collectors;
  * @DateTime: 2022-06-13 23:07
  **/
 @Service
+@Slf4j
 public class CartServiceImpl implements CartService {
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Autowired
     private CartGatewayFeignService feignService;
-    @Autowired
+    @Resource(name = "addCartExecutor")
     private ThreadPoolExecutor executor;
 
     private final String CART_PREFIX = "gulimall:cart:";
@@ -58,6 +62,7 @@ public class CartServiceImpl implements CartService {
         }else {
             CartItem item = new CartItem();
             CompletableFuture<Void> task1 = CompletableFuture.runAsync(() -> {
+                log.info("当前线程：{}",Thread.currentThread().getName());
                 R info = feignService.info(skuId);
                 SkuInfoVo skuInfo = info.getData("skuInfo", new TypeReference<SkuInfoVo>() {
                 });
@@ -67,8 +72,8 @@ public class CartServiceImpl implements CartService {
                 item.setPrice(skuInfo.getPrice());
                 item.setCount(num);
             }, executor);
-
             CompletableFuture<Void> task2 = CompletableFuture.runAsync(() -> {
+                log.info("当前线程：{}",Thread.currentThread().getName());
                 try {
                     R r = feignService.stringList(skuId);
                     List<String> listValue = r.getData("listValue", new TypeReference<List<String>>() {
