@@ -806,6 +806,10 @@
 </style>
 <script>
     $(".confirm_delete_addr").click(function (){
+        let c = confirm("确认删除吗？")
+        if(!c){
+            return false;
+        }
         let addrId = $(this).attr('addrId')
         $.post('http://member.gulimall.com/member/memberreceiveaddress/deleteByIdAndMemberId',
             { id: addrId },
@@ -814,6 +818,7 @@
             });
     })
     $(".submit_button").click(function (){
+
         let name = $("#name").val();
         let phone = $("#phone").val();
         let province = temp.getText(temp.DomProvince);//获取省份名称
