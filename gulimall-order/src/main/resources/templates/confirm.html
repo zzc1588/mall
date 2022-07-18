@@ -5,7 +5,7 @@
     <meta charset="utf-8"/>
     <script src="/static/order/confirm/js/jquery-3.1.1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/order/confirm/css/JD2.css"/>
-
+    <script src="/static/order/confirm/js/CiSelect.js"></script>
     <title>订单结算页</title>
 </head>
 
@@ -352,7 +352,7 @@
         <!--收货人信息-->
         <div class="top-2">
             <span>收货人信息</span>
-            <span>新增收货地址</span>
+            <span class="confirm_add_address">新增收货地址</span>
         </div>
         <!--地址-->
         <div class="top-3 addr-item" th:each="addr:${confirmOrderData.memberAddressVos}">
@@ -507,7 +507,7 @@
             <p class="yfze_b">寄送至： <span id="receiveAddress"></span> 收货人：<span id="receiver"></span></p>
         </div>
         <form action="http://order.gulimall.com/submitOrder" method="post">
-            <input id="addrInput" type="hidden" name="addrId" required/>
+            <input id="addrInput" type="hidden"  name="addrId" required/>
             <input id="payPriceInput" type="hidden" name="payPrice">
             <input id="payType" type="hidden" name="payType" value="1">
             <input name="orderToken" th:value="${confirmOrderData.orderToken}" type="hidden"/>
@@ -716,12 +716,71 @@
         <img src="/static/order/confirm/img/5698dc16Nb2ab99df.jpg"/>
         <img src="/static/order/confirm/img/56a89b8fNfbaade9a.jpg"/>
     </p>
-</div>
-</div>
 
+</div>
+<div class="confirm_add_addr_modal" >
+
+        <div style="text-align: center">新增收货地址</div><br>
+    <form>
+
+        <label>姓名：</label><input id="name" name="name" required><br>
+        <label>电话：</label><input id="phone" name="phone" required><br>
+        <label>省份：</label><select id="province" name="province" required></select><br>
+        <label>市/县：</label><select id="city" name="city" required></select><br>
+        <label>区：</label><select id="region" name="region" required></select><br>
+        <label>详细地址：</label><input id="detailAddress" name="detailAddress" required>
+        <div style="text-align: center;position: relative">
+            <label>设为默认：</label><input class="addr_checkbox" type="checkbox" checked id="defaultStatus" value="1" name="defaultStatus" style="width: 40px;margin-bottom: 0;position: relative;bottom: -8px;left: -20px">
+            <button type="submit" class="submit_button">确定</button>
+            <button class="close_button" type="button">取消</button>
+        </div>
+    </form>
+
+</div>
+</div>
 
 
 <style>
+    .confirm_add_addr_modal button{
+        border: 1px solid #AAAAB1;
+        border-radius:  6px;
+        width: 70px;
+        height: 30px;
+    }
+    .confirm_add_addr_modal button:hover{
+        border: 2px solid cornflowerblue;
+        cursor: pointer;
+    }
+
+    .confirm_add_addr_modal{
+        background: rgb(178 178 178 / 70%);
+        display: none;
+        width: 400px;
+        height: 300px;
+        position: fixed;
+        border-radius: 15px;
+        left: 50%;
+        top: 30%;
+        padding: 30px;
+        transform: translate(-50%,-50%);
+    }
+    .confirm_add_addr_modal label{
+        display: inline-block;
+        width: 80px;
+    }
+    .confirm_add_addr_modal select,.confirm_add_addr_modal input{
+        margin-bottom: 10px;
+        border-radius: 5px;
+        height: 30px;
+        width: 250px;
+        box-sizing: border-box;
+    }
+    .confirm_add_addr_modal input{
+        outline: none;
+        border: 1px solid #F7F7F7;
+        padding-left: 10px;
+
+    }
     .qian_x{
         display: inline-block;
         width: 200px;
@@ -731,9 +790,64 @@
         display: inline-block;
         width: 50px;
     }
+    .confirm_add_address{
+        cursor: pointer;
+    }
 
 </style>
 <script>
+    $(".submit_button").click(function (){
+        let name = $("#name").val();
+        let phone = $("#phone").val();
+        let province = temp.getText(temp.DomProvince);//获取省份名称
+        let city = temp.getText(temp.DomCity);//获取城市名称
+        let detailAddress = $("#detailAddress").val();
+        let defaultStatus = $("#defaultStatus").val();
+        let region = temp.getText(temp.DomArea);//获取区县名称
+        if(name==""||phone==""||province==""||city==""||detailAddress==""||defaultStatus==""||region==""){
+            return;
+        }
+        $.ajax({
+            url: "http://member.gulimall.com/member/memberreceiveaddress/save",
+            type:"post",
+            data:
+                JSON.stringify({
+                    name,
+                    phone,
+                    province,
+                    city,
+                    detailAddress,
+                    defaultStatus,
+                    region
+                })
+            ,
+            contentType: "application/json; charset=utf-8",
+            dataType:"json",
+            success: function () {
+                location.reload();
+            },
+            error: function (errMsg) {
+                alert(errMsg);
+            }}
+        )
+
+    })
+
+    $(".addr_checkbox").click(function (){
+        let value =  $(".addr_checkbox").attr('value');
+        console.log(value)
+        $(".addr_checkbox").attr('value',value == 0?1:0);
+    })
+    var temp = new CiSelect("province","city","region","江苏省","苏州市","姑苏区");//初始化省市区并设置默认值
+    $(".close_button").click(function (){
+        $(".confirm_add_addr_modal").css("display","none");
+
+    })
+    $(".confirm_add_address").click(function (){
+        $(".confirm_add_addr_modal").css("display","block");
+    })
+
+
     $(document).ready(function () {
         $('.header-right li:nth-of-type(6)').hover(function () {
             $('.header-r-11').css('display', 'block')
@@ -781,6 +895,10 @@
         //发送ajax请求获取运费信息
         getFare(addrId);
     });
+
+    $(".confirm_add_address").click(function (){
+
+    })
 
     //查运费
     function getFare(addrId) {

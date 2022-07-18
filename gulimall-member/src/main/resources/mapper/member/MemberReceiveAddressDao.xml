@@ -17,6 +17,9 @@
         <result property="areacode" column="areacode"/>
         <result property="defaultStatus" column="default_status"/>
     </resultMap>
+    <update id="updateAddressStatusById">
+        UPDATE `ums_member_receive_address` set default_status = 0 WHERE member_id = #{id}
+    </update>
 
 
 </mapper>

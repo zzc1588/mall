@@ -1,5 +1,7 @@
 package com.atguigu.gulimall.member.service.impl;
 
+import com.atguigu.common.to.UserResponseTo;
+import com.atguigu.gulimall.member.interceptor.MyMemberInterceptor;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import com.atguigu.gulimall.member.service.MemberReceiveAddressService;
 @Service("memberReceiveAddressService")
 public class MemberReceiveAddressServiceImpl extends ServiceImpl<MemberReceiveAddressDao, MemberReceiveAddressEntity> implements MemberReceiveAddressService {
 
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<MemberReceiveAddressEntity> page = this.page(
@@ -33,5 +36,16 @@ public class MemberReceiveAddressServiceImpl extends ServiceImpl<MemberReceiveAd
     public List<MemberReceiveAddressEntity> getAddressesByMemberId(Long memberId) {
         return this.baseMapper.selectList(new LambdaQueryWrapper<MemberReceiveAddressEntity>().eq(MemberReceiveAddressEntity::getMemberId,memberId));
     }
+
+    @Override
+    public void saveMemberReceiveAddress(MemberReceiveAddressEntity memberReceiveAddress) {
+        UserResponseTo userResponseTo = MyMemberInterceptor.loginUser.get();
+        if(memberReceiveAddress.getDefaultStatus().equals("1")){
+            this.baseMapper.updateAddressStatusById(userResponseTo.getId());
+        }
+        memberReceiveAddress.setMemberId(userResponseTo.getId());
+        this.save(memberReceiveAddress);
+    }
+
 
 }

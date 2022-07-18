@@ -7,6 +7,11 @@ import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
  * 会员收货地址
  * 
@@ -31,10 +36,12 @@ public class MemberReceiveAddressEntity implements Serializable {
 	/**
 	 * 收货人姓名
 	 */
+	@NotBlank
 	private String name;
 	/**
 	 * 电话
 	 */
+	@NotBlank
 	private String phone;
 	/**
 	 * 邮政编码
@@ -43,18 +50,22 @@ public class MemberReceiveAddressEntity implements Serializable {
 	/**
 	 * 省份/直辖市
 	 */
+	@NotBlank
 	private String province;
 	/**
 	 * 城市
 	 */
+	@NotBlank
 	private String city;
 	/**
 	 * 区
 	 */
+	@NotBlank
 	private String region;
 	/**
 	 * 详细地址(街道)
 	 */
+	@NotBlank
 	private String detailAddress;
 	/**
 	 * 省市区代码
@@ -63,6 +74,7 @@ public class MemberReceiveAddressEntity implements Serializable {
 	/**
 	 * 是否默认
 	 */
+	@NotNull @Min(0) @Max(1)
 	private Integer defaultStatus;
 
 }
