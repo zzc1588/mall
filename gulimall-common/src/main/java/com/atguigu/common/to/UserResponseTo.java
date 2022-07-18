@@ -2,15 +2,17 @@ package com.atguigu.common.to;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @Author: 钟质昌
- * @Description: TODO
+ * @Description:
  * @DateTime: 2022-06-19 17:37
  **/
 @Data
-public class UserResponseTo {
+public class UserResponseTo implements Serializable {
+    private static final long serialVersionUID = -560220213827871007L;
 
     private Long id;
     /**

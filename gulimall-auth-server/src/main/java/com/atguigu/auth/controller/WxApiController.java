@@ -1,30 +1,29 @@
 package com.atguigu.auth.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.atguigu.auth.feign.FeignService;
-import com.atguigu.auth.utils.ConstantPropertiesUtil;
 import com.atguigu.auth.utils.ConstantWxUtils;
 import com.atguigu.auth.utils.HttpClientUtils;
 import com.atguigu.auth.vo.UserInfoVo;
 import com.atguigu.common.constant.AuthServiceConstant;
 import com.atguigu.common.to.UserResponseTo;
 import com.atguigu.common.utils.R;
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Base64;
-import java.util.HashMap;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -40,7 +39,10 @@ import java.util.HashMap;
 public class WxApiController {
 
     @Autowired
-    private FeignService feignService;
+    FeignService feignService;
+    @Autowired
+    StringRedisTemplate redisTemplate;
+    private static final String KEY_PREFIX = "weChar_open:state:";
 
     /**
      * 获取扫码人的信息，添加数据
@@ -50,6 +52,11 @@ public class WxApiController {
     public String callback(String code, String state, HttpSession session, HttpServletResponse response) throws Exception {
         log.info("微信回调本地接口");
         //从redis中将state获取出来，和当前传入的state作比较
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        if(ops.get(KEY_PREFIX + state) == null){
+            log.info("非法访问微信回调接口");
+            return "redirect:http://auth.gulimall.com/login.html";
+        }
         //如果一致则放行，如果不一致则抛出异常：非法访问
 
         //向认证服务器发送请求换取access_token
@@ -111,21 +118,21 @@ public class WxApiController {
         redirect_url = URLEncoder.encode(redirect_url,"UTF-8");
 
         // 防止csrf攻击（跨站请求伪造攻击）
-        //String state = UUID.randomUUID().toString().replaceAll("-", "");//一般情况下会使用一个随机数
-//        String state = "hjl.mynatapp.cc";//为了让大家能够使用我搭建的外网的微信回调跳转服务器，这里填写你在ngrok的前置域名
-//        System.out.println("state = " + state);
+        String state = UUID.randomUUID().toString().replace("-", "");//一般情况下会使用一个随机数
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        ops.set(KEY_PREFIX+state,"",30, TimeUnit.MINUTES);
+//        String state = "https://d2d8-218-14-90-130.jp.ngrok.io";//为了能够使用我搭建的外网的微信回调跳转服务器，这里填写在ngrok的前置域名
         // 采用redis等进行缓存state 使用sessionId为key 30分钟后过期，可配置
         //键： "wechar-open-state-" + httpServletRequest.getSession().getId()
         //值： satte
         //过期时间： 30分钟
         //生成qrcodeUrl
-
         //设置%s中的值
         String url = String.format(
                 baseUrl,
                 ConstantWxUtils.WX_OPEN_APP_ID,
                 redirect_url,
-                "xunqi"
+                state
         );
 
         //重定向到请求微信地址
