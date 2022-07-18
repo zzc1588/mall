@@ -25,6 +25,9 @@ public interface MemberReceiveAddressService extends IService<MemberReceiveAddre
      * @param memberReceiveAddress
      */
     void saveMemberReceiveAddress(MemberReceiveAddressEntity memberReceiveAddress);
-
+    /**
+     * 根据主键和会员id删除
+     */
+    void deleteByIdAndMemberId(Long id );
 }
 

@@ -78,5 +78,12 @@ public class MemberReceiveAddressController {
 
         return R.ok();
     }
-
+    /**
+     * 根据主键和会员id删除
+     */
+    @PostMapping("/deleteByIdAndMemberId")
+    public R deleteByIdAndMemberId(@RequestParam("id") String id){
+        memberReceiveAddressService.deleteByIdAndMemberId(Long.parseLong(id));
+        return R.ok();
+    }
 }

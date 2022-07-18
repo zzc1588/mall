@@ -114,10 +114,6 @@
                     </div>
                     <div>
                         <h4><a href="#">我的足迹</a><a href="#">更多 ></a></h4>
-                        <a href="#"><img src="/static/order/confirm/image/59ae02fcN529cc4a1.jpg"/></a>
-                        <a href="#"><img src="/static/order/confirm/image/59ce706fN6f3f2a4a.jpg"/></a>
-                        <a href="#"><img src="/static/order/confirm/image/57b191f2N15993cbb.jpg"/></a>
-                        <a href="#"><img src="/static/order/confirm/image/58ff269fN7b7e087b.jpg"/></a>
 
                     </div>
                 </div>
@@ -356,8 +352,12 @@
         </div>
         <!--地址-->
         <div class="top-3 addr-item" th:each="addr:${confirmOrderData.memberAddressVos}">
-            <p th:attr="def=${addr.defaultStatus},addrId=${addr.id}">[[${addr.name}]]</p><span>[[${addr.name}]]  [[${addr.province}]]  [[${addr.city}]] [[${addr.region}]] [[${addr.detailAddress}]]  [[${addr.phone}]]</span>
+
+            <p th:attr="def=${addr.defaultStatus},addrId=${addr.id}">[[${addr.name}]]</p><span style="width: 200px;">[[${addr.name}]]  [[${addr.province}]]  [[${addr.city}]] [[${addr.region}]] [[${addr.detailAddress}]]  [[${addr.phone}]]</span>
+            <span class="confirm_delete_addr" th:attr="addrId=${addr.id}">删除</span>
+
         </div>
+
         <p class="p2">更多地址︾</p>
         <div class="hh1"/>
     </div>
@@ -719,28 +719,37 @@
 
 </div>
 <div class="confirm_add_addr_modal" >
-
-        <div style="text-align: center">新增收货地址</div><br>
-    <form>
-
-        <label>姓名：</label><input id="name" name="name" required><br>
-        <label>电话：</label><input id="phone" name="phone" required><br>
-        <label>省份：</label><select id="province" name="province" required></select><br>
-        <label>市/县：</label><select id="city" name="city" required></select><br>
-        <label>区：</label><select id="region" name="region" required></select><br>
-        <label>详细地址：</label><input id="detailAddress" name="detailAddress" required>
-        <div style="text-align: center;position: relative">
-            <label>设为默认：</label><input class="addr_checkbox" type="checkbox" checked id="defaultStatus" value="1" name="defaultStatus" style="width: 40px;margin-bottom: 0;position: relative;bottom: -8px;left: -20px">
-            <button type="submit" class="submit_button">确定</button>
-            <button class="close_button" type="button">取消</button>
-        </div>
-    </form>
+            <div style="text-align: center">新增收货地址</div><br>
+            <label>姓名：</label><input id="name" name="name" required><br>
+            <label>电话：</label><input id="phone" name="phone" required><br>
+            <label>省份：</label><select id="province" name="province" required></select><br>
+            <label>市/县：</label><select id="city" name="city" required></select><br>
+            <label>区：</label><select id="region" name="region" required></select><br>
+            <label>详细地址：</label><input id="detailAddress" name="detailAddress" required>
+            <div style="text-align: center;position: relative">
+                <label>设为默认：</label><input class="addr_checkbox" type="checkbox" checked id="defaultStatus" value="1" name="defaultStatus" style="width: 40px;margin-bottom: 0;position: relative;bottom: -8px;left: -20px">
+                <button type="submit" class="submit_button">确定</button>
+                <button class="close_button" type="button">取消</button>
+            </div>
 
 </div>
 </div>
 
 
 <style>
+    .confirm_delete_addr{
+        text-align: center;
+        display: inline-block;
+        margin-left: 50px!important;
+        width: 30px;
+
+    }
+    .confirm_delete_addr:hover{
+        cursor: pointer;
+        color: red!important;
+        border: 1px solid red;
+    }
+
     .confirm_add_addr_modal button{
         border: 1px solid #AAAAB1;
         border-radius:  6px;
@@ -796,6 +805,14 @@
 
 </style>
 <script>
+    $(".confirm_delete_addr").click(function (){
+        let addrId = $(this).attr('addrId')
+        $.post('http://member.gulimall.com/member/memberreceiveaddress/deleteByIdAndMemberId',
+            { id: addrId },
+            function (r,s) {
+                location.reload()
+            });
+    })
     $(".submit_button").click(function (){
         let name = $("#name").val();
         let phone = $("#phone").val();
@@ -824,10 +841,10 @@
             contentType: "application/json; charset=utf-8",
             dataType:"json",
             success: function () {
-                location.reload();
+                location.reload()
             },
             error: function (errMsg) {
-                alert(errMsg);
+                alert("系统异常，请稍后再试");
             }}
         )
 

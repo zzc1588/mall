@@ -2,6 +2,7 @@ package com.atguigu.gulimall.member.interceptor;
 
 import com.atguigu.common.constant.AuthServiceConstant;
 import com.atguigu.common.to.UserResponseTo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -15,12 +16,14 @@ import java.util.ArrayList;
  * @Description: TODO
  * @DateTime: 2022-06-24 12:58
  **/
+@Slf4j
 public class MyMemberInterceptor implements HandlerInterceptor {
     public static ThreadLocal<UserResponseTo> loginUser = new ThreadLocal<>();
 
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.info("MyMemberInterceptor当前线程:{}",Thread.currentThread().getName());
         UserResponseTo attribute = (UserResponseTo)request.getSession().getAttribute(AuthServiceConstant.LOGIN_USER);
         String uri = request.getRequestURI();
         AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -41,7 +44,6 @@ public class MyMemberInterceptor implements HandlerInterceptor {
 
         if (attribute != null) {
             //把登录后用户的信息放在ThreadLocal里面进行保存
-            request.getSession().setAttribute("gulimall-member","gulimall-member");
             loginUser.set(attribute);
             return true;
         } else {
@@ -50,8 +52,6 @@ public class MyMemberInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             PrintWriter out = response.getWriter();
             out.println("<script>alert('请先进行登录，再进行后续操作！');location.href='http://auth.gulimall.com/login.html'</script>");
-            // session.setAttribute("msg", "请先进行登录");
-            // response.sendRedirect("http://auth.gulimall.com/login.html");
             return false;
         }
     }
